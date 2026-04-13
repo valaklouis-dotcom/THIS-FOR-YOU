@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>💖 Love Cinematic 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Quicksand',sans-serif;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
+  background-size:400% 400%;
+  animation:bg 12s ease infinite;
+  overflow:hidden;
+  color:white;
+  text-align:center;
+}
+
+@keyframes bg{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+
+.page{
+  position:absolute;
+  width:100%;
+  top:50%;
+  transform:translateY(-50%) scale(0.95);
+  opacity:0;
+  transition:all .6s ease;
+}
+
+.active{
+  opacity:1;
+  transform:translateY(-50%) scale(1);
+}
+
+h1{
+  font-family:'Great Vibes',cursive;
+  font-size:clamp(30px,6vw,60px);
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:25px;
+  background:#ff69b4;
+  color:white;
+  cursor:pointer;
+  margin-top:20px;
+}
+
+/* chat cinematic */
+.chat{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%;
+  max-width:420px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.msg{
+  display:flex;
+  align-items:flex-end;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.4s;
+}
+
+.msg.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.msg img{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  margin-right:6px;
+}
+
+.bubble{
+  background:#ff4da6;
+  padding:10px 15px;
+  border-radius:18px;
+  max-width:75%;
+}
+
+/* ending effect */
+.end{
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow{
+  from{text-shadow:0 0 10px pink;}
+  to{text-shadow:0 0 30px white;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- NHẠC -->
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_8f8d2cfba1.mp3">
+</audio>
+
+<!-- PAGE 1 -->
+<div class="page active" id="p1">
+  <h1>💖 Chào người em yêu 💖</h1>
+  <p>Một chút điều muốn nói với anh...</p>
+  <button onclick="start()">Bắt đầu 💘</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="p2">
+  <h1>Anh có thương em hông?</h1>
+  <button onclick="next('p3')">Anh có 💖</button>
+  <button onclick="next('p3')">Nào dám trả lời "No"😏</button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="p3">
+  <h1>Em biết mà 💖</h1>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="p4">
+  <h1>Dạo này anh cảm thấy thế nào?</h1>
+  <input id="q1">
+  <br><button onclick="next('p5')">➡️</button>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="p5">
+  <h1>Món mà anh thích ăn nhất là gì zậy?</h1>
+  <input id="q2">
+  <br><button onclick="next('p6')">➡️</button>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page" id="p6">
+  <h1>Nếu được 1 ngày nghỉ trọn vẹn, anh muốn làm gì nhất?</h1>
+  <input id="q3">
+  <br><button onclick="next('p7')">➡️</button>
+</div>
+
+<!-- PAGE 7 -->
+<div class="page" id="p7">
+  <h1>Anh thích được tặng gì nhất nò?</h1>
+  <input id="q4">
+  <br><button onclick="next('p8')">➡️</button>
+</div>
+
+<!-- PAGE 8 -->
+<div class="page" id="p8">
+  <h1>Trong quá trình yêu nhau, còn vấn đề gì anh cảm thấy chưa thực sự hài lòng về em?</h1>
+  <input id="q5">
+  <br><button onclick="sendAllData();next('p9')">💌 Gửi</button>
+</div>
+
+<!-- PAGE 9 -->
+<div class="page" id="p9">
+  <h1 class="end">💖 Em thương anh nhiều lắm 💖</h1>
+</div>
+
+<!-- CHAT -->
+<div class="chat" id="chat"></div>
+
+<script>
+
+// start
+function start(){
+  document.getElementById("music").play();
+  next('p2');
+}
+
+// chuyển cảnh cinematic
+function next(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  story(id);
+}
+
+// chat cinematic
+let chat=document.getElementById("chat");
+
+function addMsg(text){
+  let row=document.createElement("div");
+  row.className="msg";
+
+  let av=document.createElement("img");
+  av.src="https://i.pinimg.com/564x/6b/3a/76/6b3a76c89bb7c5c96d9d1c4c4d1c8b7c.jpg";
+
+  let bubble=document.createElement("div");
+  bubble.className="bubble";
+
+  row.appendChild(av);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+
+  setTimeout(()=>row.classList.add("show"),50);
+
+  let i=0;
+  let t=setInterval(()=>{
+    bubble.innerHTML+=text[i];
+    i++;
+    if(i>=text.length) clearInterval(t);
+  },30);
+}
+
+// story cinematic
+function story(p){
+
+  setTimeout(()=>{
+    if(p==="p2") addMsg("Anh có thương em không? 😏");
+    if(p==="p3") addMsg("Em biết mà 💖");
+    if(p==="p4") addMsg("Dạo này anh thế nào 💕");
+    if(p==="p5") addMsg("Ăn gì nò 😋");
+    if(p==="p6") addMsg("Hong có ngủ nha 😏");
+    if(p==="p7") addMsg("Anh thích quà gìiii 🎁");
+    if(p==="p8") addMsg("Thật lòng nhó 😢");
+    if(p==="p9"){
+      addMsg("Em đã đọc hết rồi 💘");
+      setTimeout(()=>addMsg("Em thương anh nhiều lắm 💖"),1500);
+    }
+  },700);
+}
+
+// hiệu ứng tim nhẹ
+setInterval(()=>{
+  let h=document.createElement("div");
+  h.innerHTML="💖";
+  h.style.position="fixed";
+  h.style.left=Math.random()*100+"vw";
+  h.style.top="-10px";
+  h.style.opacity="0.7";
+  document.body.appendChild(h);
+
+  let fall=setInterval(()=>{
+    let t=parseFloat(h.style.top||0);
+    h.style.top=(t+2)+"px";
+    if(t>window.innerHeight){
+      h.remove();
+      clearInterval(fall);
+    }
+  },40);
+},400);
+
+// gửi form
+function sendAllData(){
+  let d=new FormData();
+  d.append("entry.137169317",q1.value);
+  d.append("entry.454111835",q2.value);
+  d.append("entry.1872124055",q3.value);
+  d.append("entry.669638336",q4.value);
+  d.append("entry.559059606",q5.value);
+
+  fetch("https://docs.google.com/forms/d/e/1FAIpQLSdYuCVEM7QCvCqjvtUc6SuVrNW1flerqN3PaKQ4poPHXj2uIA/formResponse",{
+    method:"POST",
+    mode:"no-cors",
+    body:d
+  });
+}
+
+</script>
+
+</body>
+</html>
